@@ -10,5 +10,4 @@ huggingface_hub==0.19.3
 sentence_transformers==2.2.2
 transformers==4.39.2
 pytesseract==0.3.10
-tesseract-ocr==0.0.1
 opencv-python-headless==4.9.0.80
