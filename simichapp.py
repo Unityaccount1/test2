@@ -1,7 +1,11 @@
 import os
 import PyPDF2
 import streamlit as st
+import pytesseract
+import cv2
+from PIL import Image
 from io import StringIO
+from transformers import pipeline
 from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
@@ -12,7 +16,14 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.callbacks.base import CallbackManager
 
 st.set_page_config(page_title="Demo", page_icon=':book:')
-
+@st.cache_data
+def extract_text_from_image(file_path):
+    if os.path.isfile(file_path):
+        if file_path.endswith(".jpg"):
+            img = cv2.imread(file_path)
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            text = pyteseract.image_to_string(gray)
+            return text
 @st.cache_data
 def load_Documentos(file_path):
     st.info(f"Leyendo documento en la ruta: {file_path}")
@@ -123,13 +134,26 @@ def main():
     
     splitter_type = "RecursiveCharacterTextSplitter"
     
+    start_app = st.sidebar.checkbox("Iniciar", value=False)
     load_files_option = st.sidebar.checkbox("Cargar archivos", value=False)
+    load_files_image = st.sidebar.checkbox("Cargar imagen", value=False)
 
 
-    if 'openai_api_key' not in st.session_state:
+    if start_app:
         os.environ["HUGGINGFACEHUB_API_TOKEN"] = "HUGGINGFACEHUB_API_TOKEN"
-    else:
-        os.environ["HUGGINGFACEHUB_API_TOKEN"] = "HUGGINGFACEHUB_API_TOKEN"
+
+    if load_files_image:
+        embeddings = HuggingFaceEmbeddings()
+        question_answering = pipeline("question-answering")
+        extracted_text = extract_text_from_image(file_path)
+        
+        #db = FAISS.from_texts(splits, embeddings)
+        st.write("Procesando imagen...")
+        
+        user_question = st.text_input("Ingresa tu pregunta:")
+            if user_question:
+                answer = question_answering(question=user_question, context=extracted_text)
+                st.write("Respuesta:", answer)
 
     if load_files_option:
         uploaded_files = st.file_uploader("Sube un documento PDF o TXT", type=[
