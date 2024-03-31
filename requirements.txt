@@ -7,5 +7,5 @@ tiktoken==0.3.1
 tokenizers==0.14
 scikit-learn==1.2.2
 cohere==4.37
-huggingface_hub==0.13.4
+huggingface_hub==0.16.5
 sentence_transformers==2.2.2
