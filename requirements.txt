@@ -8,3 +8,4 @@ tokenizers==0.14
 scikit-learn==1.2.2
 cohere==4.37
 huggingface_hub==0.13.4
+sentence_transformers==2.2.2
