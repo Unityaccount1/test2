@@ -145,6 +145,7 @@ def main():
     if load_files_image:
         embeddings = HuggingFaceEmbeddings()
         question_answering = pipeline("question-answering")
+        file_path = os.path.join(folder_path, selected_file)
         extracted_text = extract_text_from_image(file_path)
         
         #db = FAISS.from_texts(splits, embeddings)
