@@ -15,7 +15,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.callbacks.base import CallbackManager
 
-st.set_page_config(page_title="Demo", page_icon=':book:')
+st.set_page_config(page_title="Busqueda", page_icon=':shark:')
 @st.cache_data
 def extract_text_from_image(file_path):
     if os.path.isfile(file_path):
@@ -146,6 +146,7 @@ def main():
         embeddings = HuggingFaceEmbeddings()
         question_answering = pipeline("question-answering")
         file_path = os.path.join(folder_path, selected_file)
+        st.write("Ruta:",file_path)
         extracted_text = extract_text_from_image(file_path)
         
         #db = FAISS.from_texts(splits, embeddings)
