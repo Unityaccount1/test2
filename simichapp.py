@@ -6,6 +6,7 @@ from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.callbacks.base import CallbackManager
@@ -126,16 +127,9 @@ def main():
 
 
     if 'openai_api_key' not in st.session_state:
-        openai_api_key = st.text_input(
-            'Por favor, ingresa tu clave de API de OpenAI o [visita aquí](https://platform.openai.com/account/api-keys)',
-            value="", placeholder="Ingresa la clave de API de OpenAI que comienza con sk-")
-        if openai_api_key:
-            st.session_state.openai_api_key = openai_api_key
-            os.environ["OPENAI_API_KEY"] = openai_api_key
-        else:
-            return
+        os.environ["HUGGINGFACEHUB_API_TOKEN"] = "HUGGINGFACEHUB_API_TOKEN"
     else:
-        os.environ["OPENAI_API_KEY"] = st.session_state.openai_api_key
+        os.environ["HUGGINGFACEHUB_API_TOKEN"] = "HUGGINGFACEHUB_API_TOKEN"
 
     if load_files_option:
         uploaded_files = st.file_uploader("Sube un documento PDF o TXT", type=[
@@ -154,20 +148,21 @@ def main():
             st.write(f"Número de chunks: {num_chunks}")
 
             if embedding_option == "OpenAI Embeddings":
-                embeddings = OpenAIEmbeddings()
+                embeddings = HuggingFaceEmbeddings()
 
             retriever = create_retriever(embeddings, splits, retriever_type)
 
             callback_handler = StreamingStdOutCallbackHandler()
             callback_manager = CallbackManager([callback_handler])
 
-            chat_openai = ChatOpenAI(
-                streaming=True, callback_manager=callback_manager, verbose=True, temperature=temperature)
-            qa = RetrievalQA.from_chain_type(llm=chat_openai, retriever=retriever, chain_type="stuff", verbose=True)
+            #chat_openai = ChatOpenAI(
+             #   streaming=True, callback_manager=callback_manager, verbose=True, temperature=temperature)
+            #qa = RetrievalQA.from_chain_type(llm=chat_openai, retriever=retriever, chain_type="stuff", verbose=True)
+            db = FAISS.from_texts(splits, embeddings)
 
             user_question = st.text_input("Ingresa tu pregunta:")
             if user_question:
-                answer = qa.run(user_question)
+                answer = db.similarity_search(user_question)
                 st.write("Respuesta:", answer)
     else:
         file_path = os.path.join(folder_path, selected_file)
@@ -179,22 +174,25 @@ def main():
         st.write(f"Número de chunks: {num_chunks}")
 
         if embedding_option == "OpenAI Embeddings":
-            embeddings = OpenAIEmbeddings()
+            embeddings = HuggingFaceEmbeddings()
 
         retriever = create_retriever(embeddings, splits, retriever_type)
 
         callback_handler = StreamingStdOutCallbackHandler()
         callback_manager = CallbackManager([callback_handler])
 
-        chat_openai = ChatOpenAI(
-            streaming=True, callback_manager=callback_manager, verbose=True, temperature=temperature)
-        qa = RetrievalQA.from_chain_type(llm=chat_openai, retriever=retriever, chain_type="stuff", verbose=True)
+        #chat_openai = ChatOpenAI(
+        #    streaming=True, callback_manager=callback_manager, verbose=True, temperature=temperature)
+        #qa = RetrievalQA.from_chain_type(llm=chat_openai, retriever=retriever, chain_type="stuff", verbose=True)
+        db = FAISS.from_texts(splits, embeddings)
+        
 
         st.write("Listo para responder preguntas.")
 
         user_question = st.text_input("Ingresa tu pregunta:")
         if user_question:
-            answer = qa.run(user_question)
+            answer = db.similarity_search(user_question)
+            #answer = qa.run(user_question)
             st.write("Respuesta:", answer)
 
 if __name__ == "__main__":
