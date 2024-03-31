@@ -151,9 +151,9 @@ def main():
         st.write("Procesando imagen...")
         
         user_question = st.text_input("Ingresa tu pregunta:")
-            if user_question:
-                answer = question_answering(question=user_question, context=extracted_text)
-                st.write("Respuesta:", answer)
+        if user_question:
+            answer = question_answering(question=user_question, context=extracted_text)
+            st.write("Respuesta:", answer)
 
     if load_files_option:
         uploaded_files = st.file_uploader("Sube un documento PDF o TXT", type=[
