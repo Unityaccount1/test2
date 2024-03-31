@@ -10,5 +10,5 @@ cohere==4.37
 huggingface_hub==0.16.4
 sentence_transformers==2.2.2
 transformers==4.39.2
-pytesseract==0.3.13
+pytesseract==0.3.10
 opencv-python-headless==4.9.0.80
