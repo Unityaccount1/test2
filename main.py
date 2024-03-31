@@ -22,7 +22,7 @@ def extract_text_from_image(file_path):
         if file_path.endswith(".jpg"):
             img = cv2.imread(file_path)
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            text = pyteseract.image_to_string(gray)
+            text = pytesseract.image_to_string(gray)
             return text
 @st.cache_data
 def load_Documentos(file_path):
@@ -106,8 +106,8 @@ def main():
     st.write(
         f"""
         <div style="display: flex; align-items: center; margin-left: 0;">
-            <h1 style="display: inline-block;">DemoPDF</h1>
-            <sup style="margin-left:5px;font-size:small; color: green;">beta v0.4</sup>
+            <h1 style="display: inline-block;">Busqueda</h1>
+            <sup style="margin-left:5px;font-size:small; color: blue;">test v0.1</sup>
         </div>
         """,
         unsafe_allow_html=True,
